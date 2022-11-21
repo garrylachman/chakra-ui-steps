@@ -65,7 +65,7 @@
     "@babel/preset-env": "7.17.12",
     "@babel/preset-react": "7.17.12",
     "@babel/preset-typescript": "7.17.12",
-    "@babel/runtime": "7.17.12",
+    "@babel/runtime": "7.17.7",
     "@babel/types": "7.17.12",
     "@chakra-ui/react": "^2.0.0",
     "@emotion/react": "^11",
