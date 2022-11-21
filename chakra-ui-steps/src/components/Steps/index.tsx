@@ -8,7 +8,7 @@ import {
 } from '@chakra-ui/system';
 import { useMultiStyleConfig } from "@chakra-ui/react";
 import { cx } from '@chakra-ui/utils';
-import React, { ComponentType, Ref, Children, isValidElement, cloneElement } from 'react';
+import React, { ComponentType, Ref, Children, isValidElement, cloneElement, useCallback, useMemo } from 'react';
 import { StepsProvider } from '../../context/index';
 
 export interface StepsProps extends HTMLChakraProps<'ol'>, ThemingProps {
@@ -44,11 +44,11 @@ export const Steps = forwardRef<StepsProps, 'div'>(
       ...styles.steps,
     };
 
-    const childArr = Children.toArray(children);
+    const childArr = useMemo(() => Children.toArray(children), [children]);
 
     const stepCount = childArr.length;
 
-    const renderHorizontalContent = () => {
+    const renderHorizontalContent = useCallback(() => {
       if (activeStep <= childArr.length) {
         return Children.map(childArr[activeStep], node => {
           if (!isValidElement(node)) return;
@@ -59,11 +59,11 @@ export const Steps = forwardRef<StepsProps, 'div'>(
         });
       }
       return null;
-    };
+    }, [activeStep, childArr]);
 
     const clickable = !!onClickStep;
 
-    const [isMobile] = useMediaQuery('(max-width: 43em)', { fallback: false });
+    const [isMobile] = useMediaQuery('(max-width: 43em)');
 
     const orientation = isMobile && responsive ? 'vertical' : orientationProp;
 
@@ -93,10 +93,8 @@ export const Steps = forwardRef<StepsProps, 'div'>(
             className={cx('chakra-steps', className)}
             {...rest}
           >
-            {Children.map(children, (child, i) => {
-              const isCompletedStep =
-                (isValidElement(child) && (child.props as any).isCompletedStep ) ??
-                i < activeStep;
+            {Children.map(children, useCallback((child, i) => {
+              const isCompletedStep = (isValidElement(child) && (child.props as any).isCompletedStep ) ?? i < activeStep;
               const isLastStep = i === stepCount - 1;
               const isCurrentStep = i === activeStep;
 
@@ -112,7 +110,7 @@ export const Steps = forwardRef<StepsProps, 'div'>(
               }
 
               return null;
-            })}
+            }, [activeStep, stepCount]))}
           </chakra.ol>
           {orientation === 'horizontal' && renderHorizontalContent()}
         </StepsProvider>

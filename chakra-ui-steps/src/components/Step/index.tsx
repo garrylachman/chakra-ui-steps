@@ -86,7 +86,7 @@ export const Step = forwardRef<StepProps, 'li'>(
           });
         }
       },
-      [stepIconContainer?.width, stepIconContainer?.height]
+      [stepCount]
     );
 
     return (
